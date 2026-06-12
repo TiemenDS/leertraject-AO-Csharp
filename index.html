@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C# OOP — Interactief Leertraject</title>
+  <meta name="description" content="Interactief leerplatform voor C# Object-Georiënteerd Programmeren: theorie, voorbeelden, quizzen, oefeningen, examens en een eindproject." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚙️</text></svg>" />
+</head>
+<body>
+
+  <div class="app">
+    <!-- ============ Sidebar ============ -->
+    <aside class="sidebar" id="sidebar">
+      <div class="brand" id="brandHome" style="cursor:pointer">
+        <div class="logo">C#</div>
+        <div>
+          <div class="t">C# OOP</div>
+          <div class="s">Interactief leertraject</div>
+        </div>
+      </div>
+      <div class="userchip" id="userchip"></div>
+      <nav id="nav"></nav>
+    </aside>
+
+    <!-- ============ Main ============ -->
+    <main class="main" id="main">
+      <header class="topbar">
+        <button class="icon-btn" id="menuBtn" title="Menu" aria-label="Menu">☰</button>
+        <h1>C# Object-Georiënteerd Programmeren</h1>
+        <div class="spacer"></div>
+        <button class="icon-btn" id="themeBtn" title="Licht / donker" aria-label="Thema wisselen">🌓</button>
+      </header>
+      <div id="view"></div>
+    </main>
+  </div>
+
+  <!-- ============ Auth-modal ============ -->
+  <div class="modal-bg" id="authModal">
+    <div class="modal">
+      <h2>C# Leertraject</h2>
+      <p class="sub">Meld je aan of maak een account om je voortgang, XP en badges te bewaren.</p>
+
+      <div class="tabs">
+        <button id="tabLogin" class="active">Inloggen</button>
+        <button id="tabRegister">Registreren</button>
+      </div>
+
+      <!-- Login -->
+      <div id="loginPanel">
+        <div class="err-msg" id="loginErr"></div>
+        <div class="field">
+          <label for="loginUser">Gebruikersnaam</label>
+          <input id="loginUser" type="text" autocomplete="username" placeholder="bv. tiemen" />
+        </div>
+        <div class="field">
+          <label for="loginPass">Wachtwoord</label>
+          <input id="loginPass" type="password" autocomplete="current-password" placeholder="••••••" />
+        </div>
+        <div class="btn-row">
+          <button class="btn" id="loginBtn">Inloggen</button>
+        </div>
+      </div>
+
+      <!-- Registreren -->
+      <div id="registerPanel" class="hidden">
+        <div class="err-msg" id="regErr"></div>
+        <div class="field">
+          <label for="regUser">Gebruikersnaam <span class="muted">(min. 3 tekens)</span></label>
+          <input id="regUser" type="text" autocomplete="username" placeholder="kies een naam" />
+        </div>
+        <div class="field">
+          <label for="regPass">Wachtwoord <span class="muted">(min. 4 tekens)</span></label>
+          <input id="regPass" type="password" autocomplete="new-password" placeholder="kies een wachtwoord" />
+        </div>
+
+        <hr class="sep" />
+
+        <div class="check-row">
+          <input type="checkbox" id="c1" />
+          <label for="c1">Dit wachtwoord is uitsluitend bedoeld voor deze website.</label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="c2" />
+          <label for="c2">Ik gebruik hier geen wachtwoord dat ik elders gebruik.</label>
+        </div>
+        <div class="check-row">
+          <input type="checkbox" id="c3" />
+          <label for="c3">Hoewel beveiligingsmaatregelen worden genomen, kan niet gegarandeerd worden dat gegevens nooit uitlekken bij een hack of beveiligingsincident.</label>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn" id="regBtn" disabled>Account aanmaken</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ Scripts (volgorde is belangrijk) ============ -->
+  <!-- 1. Config, opslag & auth -->
+  <script src="auth.js"></script>
+  <!-- 2. Lesinhoud -->
+  <script src="module0.js"></script>
+  <script src="module1.js"></script>
+  <script src="module2.js"></script>
+  <script src="module3.js"></script>
+  <!-- 3. COURSE / BADGES / EXAMS (heeft de modules nodig) -->
+  <script src="course.js"></script>
+  <!-- 4. Gamificatie & UI -->
+  <script src="gamify.js"></script>
+  <script src="ui.js"></script>
+  <!-- 5. Opstart -->
+  <script src="app.js"></script>
+</body>
+</html>
