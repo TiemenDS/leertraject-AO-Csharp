@@ -8,14 +8,95 @@ const UI = (() => {
 
   /* ---------- Code highlighter (lichtgewicht C#) ---------- */
   function highlight(code) {
-    let s = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    s = s.replace(/(\/\/[^\n]*)/g, '<span class="tok-com">$1</span>');
-    s = s.replace(/(&quot;|").*?(&quot;|")/g, m => `<span class="tok-str">${m}</span>`);
-    s = s.replace(/\b(public|private|protected|internal|static|class|void|int|double|bool|string|char|new|return|if|else|for|while|get|set|this|null|true|false|namespace|using|try|catch|finally|throw|required|const|enum)\b/g,
-      '<span class="tok-kw">$1</span>');
-    s = s.replace(/\b([A-Z][A-Za-z0-9_]*)\b/g, '<span class="tok-type">$1</span>');
-    s = s.replace(/\b(\d+\.?\d*)\b/g, '<span class="tok-num">$1</span>');
-    return s;
+    // HTML escapen
+    code = code
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+
+    const keywords = new Set([
+      "public","private","protected","internal","static",
+      "class","void","int","double","float","decimal",
+      "bool","string","char","new","return","if","else",
+      "for","foreach","while","do","switch","case","break",
+      "continue","this","base","null","true","false",
+      "namespace","using","try","catch","finally","throw",
+      "const","readonly","enum","struct","interface",
+      "virtual","override","abstract","sealed","async",
+      "await","var","get","set"
+    ]);
+
+    let result = "";
+    let i = 0;
+
+    while (i < code.length) {
+
+      // Commentaar
+      if (code.substring(i, i + 2) === "//") {
+        let end = code.indexOf("\n", i);
+        if (end === -1) end = code.length;
+
+        result += `<span class="tok-com">${code.slice(i, end)}</span>`;
+        i = end;
+        continue;
+      }
+
+      // Strings
+      if (code[i] === '"') {
+        let j = i + 1;
+
+        while (j < code.length) {
+          if (code[j] === "\\" && j + 1 < code.length) {
+            j += 2;
+            continue;
+          }
+
+          if (code[j] === '"') {
+            j++;
+            break;
+          }
+
+          j++;
+        }
+
+        result += `<span class="tok-str">${code.slice(i, j)}</span>`;
+        i = j;
+        continue;
+      }
+
+      // Getallen
+      const numMatch = code.slice(i).match(/^\d+(\.\d+)?/);
+      if (numMatch) {
+        result += `<span class="tok-num">${numMatch[0]}</span>`;
+        i += numMatch[0].length;
+        continue;
+      }
+
+      // Woorden
+      const wordMatch = code.slice(i).match(/^[A-Za-z_][A-Za-z0-9_]*/);
+
+      if (wordMatch) {
+        const word = wordMatch[0];
+
+        if (keywords.has(word)) {
+          result += `<span class="tok-kw">${word}</span>`;
+        }
+        else if (/^[A-Z]/.test(word)) {
+          result += `<span class="tok-type">${word}</span>`;
+        }
+        else {
+          result += word;
+        }
+
+        i += word.length;
+        continue;
+      }
+
+      result += code[i];
+      i++;
+    }
+
+    return result;
   }
   function codeBlock(code) {
     const pre = el("pre");
