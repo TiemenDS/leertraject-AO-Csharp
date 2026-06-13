@@ -254,25 +254,42 @@ const UI = (() => {
     swap(c);
   }
 
+  /* ---------- Antwoordopties husselen (Fisher-Yates) ----------
+     Geeft een nieuwe volgorde van opts terug + de nieuwe index van
+     het juiste antwoord, zodat het correcte antwoord niet altijd
+     bovenaan staat. Elke render is opnieuw willekeurig. */
+  function shuffledOptions(q) {
+    const order = q.opts.map((_, i) => i);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    return {
+      opts: order.map(i => q.opts[i]),
+      correct: order.indexOf(q.correct)
+    };
+  }
+
   /* ---------- Quiz builder ---------- */
   function buildQuiz(wrap, questions, lessonId) {
     let answered = 0, correctCount = 0;
     const state = questions.map(() => null);
     questions.forEach((q, qi) => {
+      const shuffled = shuffledOptions(q);
       const block = el("div", "quiz-q");
       block.appendChild(el("div", "qt", `${qi + 1}. ${q.q}`));
       const fb = el("div", "quiz-feedback");
-      q.opts.forEach((opt, oi) => {
+      shuffled.opts.forEach((opt, oi) => {
         const btn = el("button", "quiz-opt", opt);
         btn.onclick = () => {
           if (state[qi] !== null) return;
           state[qi] = oi;
           answered++;
-          const ok = oi === q.correct;
+          const ok = oi === shuffled.correct;
           if (ok) correctCount++;
           [...block.querySelectorAll(".quiz-opt")].forEach((b, bi) => {
             b.disabled = true;
-            if (bi === q.correct) b.classList.add("correct");
+            if (bi === shuffled.correct) b.classList.add("correct");
             else if (bi === oi) b.classList.add("wrong");
           });
           fb.className = "quiz-feedback show " + (ok ? "ok" : "no");
@@ -363,17 +380,18 @@ const UI = (() => {
     let answered = 0, correct = 0;
     const state = test.questions.map(() => null);
     test.questions.forEach((q, qi) => {
+      const shuffled = shuffledOptions(q);
       const block = el("div", "quiz-q");
       block.appendChild(el("div", "qt", `${qi + 1}. ${q.q}`));
-      q.opts.forEach((opt, oi) => {
+      shuffled.opts.forEach((opt, oi) => {
         const btn = el("button", "quiz-opt", opt);
         btn.onclick = () => {
           if (state[qi] !== null) return;
           state[qi] = oi; answered++;
-          if (oi === q.correct) correct++;
+          if (oi === shuffled.correct) correct++;
           [...block.querySelectorAll(".quiz-opt")].forEach((b, bi) => {
             b.disabled = true;
-            if (bi === q.correct) b.classList.add("correct");
+            if (bi === shuffled.correct) b.classList.add("correct");
             else if (bi === oi) b.classList.add("wrong");
           });
           if (answered === test.questions.length) done();
